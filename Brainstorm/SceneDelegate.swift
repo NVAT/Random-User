@@ -1,9 +1,6 @@
 //
 //  SceneDelegate.swift
 //  Brainstorm
-//
-//  Created by Lsoft on 21.04.21.
-//
 
 import UIKit
 
