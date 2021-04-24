@@ -156,7 +156,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 }
                 self.isLoading = true
                 pageCounter.localPage += 1
-                LocalDataViewModel.shared.readValues(saved: &savedUserData, page: pageCounter.localPage)
+                LocalDataViewModel.shared.readValues(saved: &savedUserData, page: pageCounter.localPage - 1)
                 self.isLoading = false
             }
             
