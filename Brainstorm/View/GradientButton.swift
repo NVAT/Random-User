@@ -1,9 +1,6 @@
 //
 //  GradientButton.swift
 //  Brainstorm
-//
-//  Created by Lsoft on 22.04.21.
-//
 
 import UIKit
 

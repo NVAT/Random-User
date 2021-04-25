@@ -78,9 +78,8 @@
 		C20602D026343D93002DCD09 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				C20602D82635288E002DCD09 /* DbManager.swift */,
+				C20602E62635678E002DCD09 /* SqlLiteDB */,
 				C2A27A912632A46D00BAA74D /* SaveUserSQLiteModel.swift */,
-				C20602D52635272E002DCD09 /* SQLiteDB.swift */,
 				C23B1A2226314F0C0009376C /* RandomMuserModel.swift */,
 				C23B1A252631503B0009376C /* ApiService.swift */,
 				C20602C926331535002DCD09 /* AlamofierManager.swift */,
@@ -96,6 +95,15 @@
 				C23B1A19263099DB0009376C /* UsersTableViewCell.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		C20602E62635678E002DCD09 /* SqlLiteDB */ = {
+			isa = PBXGroup;
+			children = (
+				C20602D82635288E002DCD09 /* DbManager.swift */,
+				C20602D52635272E002DCD09 /* SQLiteDB.swift */,
+			);
+			path = SqlLiteDB;
 			sourceTree = "<group>";
 		};
 		C23B19F8263097DD0009376C = {

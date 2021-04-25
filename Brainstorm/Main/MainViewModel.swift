@@ -2,8 +2,6 @@
 //  MainViewModel.swift
 //  Brainstorm
 //
-//  Created by Lsoft on 23.04.21.
-//
 
 import Foundation
 
