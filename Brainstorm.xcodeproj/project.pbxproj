@@ -10,6 +10,8 @@
 		C20602C7263311C3002DCD09 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20602C6263311C3002DCD09 /* MainViewModel.swift */; };
 		C20602CA26331535002DCD09 /* AlamofierManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20602C926331535002DCD09 /* AlamofierManager.swift */; };
 		C20602CD26331F4A002DCD09 /* LocalDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20602CC26331F4A002DCD09 /* LocalDataViewModel.swift */; };
+		C20602D62635272E002DCD09 /* SQLiteDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20602D52635272E002DCD09 /* SQLiteDB.swift */; };
+		C20602D92635288E002DCD09 /* DbManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20602D82635288E002DCD09 /* DbManager.swift */; };
 		C20C4ED395DAD8B5156D7C18 /* Pods_Brainstorm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 212FB3083AA3C71D3B55BCCC /* Pods_Brainstorm.framework */; };
 		C23B1A05263097DE0009376C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B1A04263097DE0009376C /* AppDelegate.swift */; };
 		C23B1A07263097DE0009376C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B1A06263097DE0009376C /* SceneDelegate.swift */; };
@@ -23,7 +25,7 @@
 		C23B1A262631503B0009376C /* ApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B1A252631503B0009376C /* ApiService.swift */; };
 		C23B1A2E263189660009376C /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B1A2D263189660009376C /* DetailsViewController.swift */; };
 		C2A27A8D2631BD2D00BAA74D /* GradientButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A27A8C2631BD2D00BAA74D /* GradientButton.swift */; };
-		C2A27A922632A46D00BAA74D /* SaveUserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A27A912632A46D00BAA74D /* SaveUserModel.swift */; };
+		C2A27A922632A46D00BAA74D /* SaveUserSQLiteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A27A912632A46D00BAA74D /* SaveUserSQLiteModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,8 @@
 		C20602C6263311C3002DCD09 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		C20602C926331535002DCD09 /* AlamofierManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofierManager.swift; sourceTree = "<group>"; };
 		C20602CC26331F4A002DCD09 /* LocalDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDataViewModel.swift; sourceTree = "<group>"; };
+		C20602D52635272E002DCD09 /* SQLiteDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteDB.swift; sourceTree = "<group>"; };
+		C20602D82635288E002DCD09 /* DbManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbManager.swift; sourceTree = "<group>"; };
 		C23B1A01263097DE0009376C /* Brainstorm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Brainstorm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C23B1A04263097DE0009376C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C23B1A06263097DE0009376C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -46,7 +50,7 @@
 		C23B1A252631503B0009376C /* ApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiService.swift; sourceTree = "<group>"; };
 		C23B1A2D263189660009376C /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 		C2A27A8C2631BD2D00BAA74D /* GradientButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientButton.swift; sourceTree = "<group>"; };
-		C2A27A912632A46D00BAA74D /* SaveUserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveUserModel.swift; sourceTree = "<group>"; };
+		C2A27A912632A46D00BAA74D /* SaveUserSQLiteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveUserSQLiteModel.swift; sourceTree = "<group>"; };
 		CE4CF34380911546464EC644 /* Pods-Brainstorm.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Brainstorm.debug.xcconfig"; path = "Target Support Files/Pods-Brainstorm/Pods-Brainstorm.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -74,7 +78,9 @@
 		C20602D026343D93002DCD09 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				C2A27A912632A46D00BAA74D /* SaveUserModel.swift */,
+				C20602D82635288E002DCD09 /* DbManager.swift */,
+				C2A27A912632A46D00BAA74D /* SaveUserSQLiteModel.swift */,
+				C20602D52635272E002DCD09 /* SQLiteDB.swift */,
 				C23B1A2226314F0C0009376C /* RandomMuserModel.swift */,
 				C23B1A252631503B0009376C /* ApiService.swift */,
 				C20602C926331535002DCD09 /* AlamofierManager.swift */,
@@ -260,14 +266,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2A27A922632A46D00BAA74D /* SaveUserModel.swift in Sources */,
+				C2A27A922632A46D00BAA74D /* SaveUserSQLiteModel.swift in Sources */,
 				C23B1A1B263099DB0009376C /* UsersTableViewCell.swift in Sources */,
 				C2A27A8D2631BD2D00BAA74D /* GradientButton.swift in Sources */,
+				C20602D92635288E002DCD09 /* DbManager.swift in Sources */,
 				C23B1A09263097DE0009376C /* MainViewController.swift in Sources */,
 				C20602CD26331F4A002DCD09 /* LocalDataViewModel.swift in Sources */,
 				C23B1A262631503B0009376C /* ApiService.swift in Sources */,
 				C20602C7263311C3002DCD09 /* MainViewModel.swift in Sources */,
 				C23B1A05263097DE0009376C /* AppDelegate.swift in Sources */,
+				C20602D62635272E002DCD09 /* SQLiteDB.swift in Sources */,
 				C20602CA26331535002DCD09 /* AlamofierManager.swift in Sources */,
 				C23B1A2E263189660009376C /* DetailsViewController.swift in Sources */,
 				C23B1A2326314F0C0009376C /* RandomMuserModel.swift in Sources */,
@@ -350,6 +358,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				"MTL_ENABLE_DEBUG_INFO[arch=*]" = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -420,12 +429,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 98AQQ5VSAS;
 				INFOPLIST_FILE = Brainstorm/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				"MTL_ENABLE_DEBUG_INFO[arch=*]" = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = am.BrainstormTechnologies.Brainstorm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -440,12 +450,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 98AQQ5VSAS;
 				INFOPLIST_FILE = Brainstorm/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				"MTL_ENABLE_DEBUG_INFO[arch=*]" = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = am.BrainstormTechnologies.Brainstorm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

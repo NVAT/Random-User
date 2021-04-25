@@ -30,11 +30,11 @@ class UsersTableViewCell: UITableViewCell {
         
         nameLabel?.text = param.name.first.wrapp+" "+param.name.last.wrapp
         
-        genderPhoneLabel?.text = param.gender.wrapp+" "+param.cell.wrapp
+        genderPhoneLabel?.text = param.gender.wrapp+" "+param.phone.wrapp
         
         countryLabel.text = param.location.country.wrapp
         
-        addressLabel?.text = param.location.state.wrapp+" "+param.location.city.wrapp+" "+param.location.street.name!
+        addressLabel?.text = param.location.street.number!.toString+" "+param.location.state.wrapp+" "+param.location.street.name.wrapp
         
         if param.picture.isSaved.wrapp {
             
@@ -48,14 +48,20 @@ class UsersTableViewCell: UITableViewCell {
         else{
             if let url = param.picture.medium {
                 
-                let activityIndicator = UIActivityIndicatorView(frame: profileImageView.frame)
-                activityIndicator.startAnimating()
+                let activityIndicator = profileImageView.indicatorView
                 profileImageView.addSubview(activityIndicator)
-                activityIndicator.center = profileImageView.center
-                profileImageView.load(url: url){
-                    if let image = self.profileImageView.image {
+                profileImageView.load(url: url){ image in
+                    
+                    DispatchQueue.main.async {
+                        
                         activityIndicator.stopAnimating()
-                        cachedImage.setObject(image, forKey: url as NSString)
+                        if let image = image {
+                            self.profileImageView.image = image
+                            cachedImage.setObject(image, forKey: url as NSString)
+                        }else{
+                            self.profileImageView.image = UIImage(named: "defalut")
+                        }
+                        
                     }
                     
                 }
@@ -72,18 +78,32 @@ class UsersTableViewCell: UITableViewCell {
 
 
 extension UIImageView {
-    func load(url: String, compleated: @escaping (() -> ())) {
-        guard let url = URL(string: url) else {return}
-        DispatchQueue.global().async { [weak self] in
-            guard self != nil else {return}
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                        compleated()
-                    }
+    func load(url: String, compleated: @escaping ((_ image:UIImage?) -> ())) {
+        if let url = URL(string: url) {
+            DispatchQueue.global().async { [weak self] in
+                guard self != nil else {return}
+                
+                if let data = try? Data(contentsOf: url) {
+                    let image = UIImage(data: data)
+                    compleated(image)
+                }else{
+                    compleated(nil)
                 }
             }
+        }else{
+            compleated(nil)
         }
+    }
+}
+
+extension UIView {
+    
+    var indicatorView:UIActivityIndicatorView {
+        let activityIndicator = UIActivityIndicatorView(frame: self.frame)
+        activityIndicator.startAnimating()
+        activityIndicator.backgroundColor = UIColor.black
+        activityIndicator.color = UIColor.white
+        activityIndicator.center = self.center
+        return activityIndicator
     }
 }

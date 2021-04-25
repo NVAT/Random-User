@@ -5,18 +5,18 @@
 
 import Foundation
 
-protocol Networkmanager {
+protocol NetworkManager {
     func request(page:Int, completionHandler: @escaping (Result?, Error?) -> ())
     func handleResp(data:Data) -> Result?
+    func isConnectedToInternet() ->Bool
 }
 
 
 class ApiService {
-
-    private let manager: Networkmanager!
-    internal var page = 1
     
-    internal init(manager:Networkmanager) {
+    private let manager: NetworkManager!
+    
+    init(manager:NetworkManager) {
         self.manager = manager
     }
     
@@ -25,6 +25,11 @@ class ApiService {
         self.manager.request(page: page){ (result, error) in
             completionHandler(result, error)
         }
+        
+    }
+    
+    func isConnectedToInternet() ->Bool {
+        self.manager.isConnectedToInternet()
     }
     
 }

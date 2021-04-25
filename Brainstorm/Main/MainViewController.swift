@@ -27,11 +27,18 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
     
+    private let refreshControl = UIRefreshControl()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName: "UsersTableViewCell", bundle: nil), forCellReuseIdentifier: UsersTableViewCell.identifier)
+        
+        tableView.refreshControl = refreshControl
+        
+        // Configure Refresh Control
+        refreshControl.addTarget(self, action: #selector(refreshWeatherData(_:)), for: .valueChanged)
         
         initSearchController()
         
@@ -39,15 +46,58 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         getUserList()
         
         //MARK: Read data from local DB
+        fetchDataFromLocalStorage()
+        
+    }
+    
+    private func fetchDataFromLocalStorage(isReset:Bool = false) {
+        if isReset {
+            savedUserData.removeAll()
+        }
         LocalDataViewModel.shared.readValues(saved: &savedUserData)
     }
     
-    func getUserList(page:Int = 1){
+    @objc private func refreshWeatherData(_ sender: UIRefreshControl) {
+        if !isLoading {
+            refreshData()
+        }
+    }
+    
+    private func refreshData() {
+        
+        if segmentControl.selectedSegmentIndex == 0 {
+            getUserList(isRefresh: true)
+        }else{
+            fetchDataFromLocalStorage(isReset:true)
+            self.refreshControl.endRefreshing()
+        }
+    }
+    
+    private var errorText = ""
+    
+    private func getUserList(page:Int = 1, isRefresh:Bool = false){
         
         self.mainViewModel.page = page
-        self.mainViewModel.bindMainViewModelToController = {
+        self.mainViewModel.bindMainViewModelToController = { resp, error in
+            
+            self.errorText = ""
+            if let error = error as NSError? {
+                self.errorText = error.description
+            }
+            
+            if let data = resp {
+                if isRefresh {
+                    self.data = data
+                }else{
+                    self.data += data
+                }
+            }
+            
+            if isRefresh {
+                self.refreshControl.endRefreshing()
+            }
+            
             self.tableView.tableFooterView = UIView()
-            self.data += self.mainViewModel.data
             self.isLoading = false
         }
     }
@@ -60,6 +110,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         searchController.searchBar.enablesReturnKeyAutomatically = false
         searchController.searchBar.returnKeyType = UIReturnKeyType.done
         definesPresentationContext = true
+        
         
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -96,13 +147,25 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @objc private func segmentChanged(_ sender: UISegmentedControl) {
         pageCounter.localPage = 1
         self.tableView.reloadData()
+        if self.savedUserData.count == 0 && sender.selectedSegmentIndex == 1 {
+            self.errorText = "There is no saved user yet"
+        }
+        searchController.searchBar.showsScopeBar = sender.selectedSegmentIndex == 0
         self.isLoading = false
     }
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return currentData.count
+        if  currentData.count > 0 {
+            tableView.backgroundView = nil
+            return currentData.count
+        }
+        else {
+            self.tableView.backgroundView = self.tableView.createErrorText(errorText: self.errorText)
+            return 0
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -129,7 +192,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
            visiblePaths.contains([0, currentSegmentData.count - 1]) {
             
             let position = scrollView.contentOffset.y
-            if position > tableView.contentSize.height - scrollView.frame.size.height && !isLoading {
+            if position > tableView.contentSize.height - scrollView.frame.size.height && !isLoading && !self.refreshControl.isRefreshing {
                 loadMoreData()
             }
             
@@ -145,23 +208,19 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     private func loadMoreData() {
-        if !self.isLoading {
-            if segmentControl.selectedSegmentIndex == 0 {
-                self.isLoading = true
-                pageCounter.extPage += 1
-                getUserList(page:pageCounter.extPage)
-            }else{
-                if savedUserData.count < pageCounter.localPage*20 {
-                    return
-                }
-                self.isLoading = true
-                pageCounter.localPage += 1
-                LocalDataViewModel.shared.readValues(saved: &savedUserData, page: pageCounter.localPage - 1)
-                self.isLoading = false
+        if segmentControl.selectedSegmentIndex == 0 && self.mainViewModel.isInternetConnected {
+            self.isLoading = true
+            pageCounter.extPage += 1
+            getUserList(page:pageCounter.extPage)
+        }else{
+            if savedUserData.count < pageCounter.localPage*20 {
+                return
             }
-            
+            self.isLoading = true
+            pageCounter.localPage += 1
+            LocalDataViewModel.shared.readValues(saved: &savedUserData, page: pageCounter.localPage - 1)
+            self.isLoading = false
         }
-        
     }
     
 }
@@ -204,7 +263,6 @@ extension MainViewController: UISearchResultsUpdating {
         
     }
     
-    
     func updateSearchResults(for searchController: UISearchController)
     {
         let searchBar = searchController.searchBar
@@ -222,6 +280,39 @@ extension MainViewController:DetailsViewControllerDelegate {
         savedUserData.removeAll()
         LocalDataViewModel.shared.readValues(saved: &savedUserData)
         tableView.reloadData()
+    }
+    
+}
+
+extension UIView {
+    
+    func createErrorText(errorText:String = "") ->UIView{
+        
+        if errorText.isEmpty {
+            return self.showProgressBar
+        }
+        let errorMessage = UILabel(frame:CGRect(x: 0, y: 0,
+                                                width: self.frame.size.width,
+                                                height: self.frame.size.height))
+        errorMessage.text = errorText
+        errorMessage.font = UIFont.boldSystemFont(ofSize: 17)
+        errorMessage.numberOfLines = 0
+        errorMessage.textColor = UIColor.red
+        errorMessage.textAlignment = NSTextAlignment.center
+        errorMessage.sizeToFit()
+        
+        return errorMessage
+    }
+    
+    
+    var showProgressBar:UIActivityIndicatorView {
+        
+        let activityIndicator = UIActivityIndicatorView(frame:CGRect(x: 0, y: 0,
+                                                                     width: self.frame.size.width,
+                                                                     height: self.frame.size.height))
+        activityIndicator.center = self.center
+        activityIndicator.startAnimating()
+        return activityIndicator
     }
     
 }

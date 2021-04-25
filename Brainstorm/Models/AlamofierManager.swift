@@ -8,12 +8,13 @@ import Foundation
 import Alamofire
 
 
-class AlamofierManager:Networkmanager {
+class AlamofierManager:NetworkManager {
     
     private var manager: SessionManager
     private var decoder: JSONDecoder
     private var url = "https://randomuser.me/api?seed=brainstorm&results=20&page={page}"    
-    internal init() {
+    
+    init() {
         self.manager = Alamofire.SessionManager.default
         self.decoder = JSONDecoder()
     }
@@ -34,8 +35,10 @@ class AlamofierManager:Networkmanager {
                 //print(json)
                 if let resp = self.handleResp(data:response.data ?? Data()) {
                     completionHandler(resp, response.error)
+                }else{
+                    completionHandler(nil, response.error)
                 }
-            case .failure(let error as NSError):
+            case .failure(let error):
                 completionHandler(nil, error)
             }
         }
@@ -48,6 +51,11 @@ class AlamofierManager:Networkmanager {
         }catch{
             return nil
         }
+    }
+    
+    
+   func isConnectedToInternet() ->Bool {
+        return NetworkReachabilityManager()!.isReachable
     }
     
 }

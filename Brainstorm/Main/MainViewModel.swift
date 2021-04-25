@@ -12,18 +12,13 @@ class MainViewModel {
     private let manager:AlamofierManager!
     private var apiService : ApiService!
     
-    private(set) var data : [Results]! {
-        didSet {
-            self.bindMainViewModelToController()
-        }
-    }
     internal var page:Int = 1 {
         didSet {
             self.callToGetUserData()
         }
     }
     
-    var bindMainViewModelToController : (() -> ()) = {}
+    var bindMainViewModelToController : ((_ data:[Results]?, _ error:Error?) -> ()) = {_,_  in }
     
     init() {
         self.manager = AlamofierManager()
@@ -33,10 +28,12 @@ class MainViewModel {
     func callToGetUserData() {
         
         apiService.request(page: page) { (resp, error) in
-            if let result = resp?.results {
-                self.data = result
-            }
+            self.bindMainViewModelToController(resp?.results, error)
         }
+    }
+    
+    var isInternetConnected:Bool {
+        return apiService.isConnectedToInternet()
     }
     
 }

@@ -28,12 +28,12 @@ class DetailsViewController: UIViewController {
         super.viewDidLoad()
         self.title = params.name.first.wrapp+" "+params.name.last.wrapp
         
-        initUserDetaild()
+        initUserDetail()
         createMapAnnotation()
     }
     
     
-    private func initUserDetaild() {
+    private func initUserDetail() {
         
         if (params.picture.isSaved.wrapp) || LocalDataViewModel.shared.isExist(uuid: params.login.uuid.wrapp) {
             
@@ -50,14 +50,18 @@ class DetailsViewController: UIViewController {
             removeUserButton.isHidden = false
             saveUserButton.isDisabled = true
             
-        }else{
-            profileImageView.image = cachedImage.object(forKey: params.picture.medium.wrapp as NSString)
+        }else if let cachedImage = cachedImage.object(forKey: params.picture.medium.wrapp as NSString) {
+            profileImageView.image = cachedImage
         }
         
+        
         nameLabel?.text = params.name.first.wrapp+" "+params.name.last.wrapp
-        genderPhoneLabel?.text = params.gender.wrapp+" "+params.cell.wrapp
+        
+        genderPhoneLabel?.text = params.gender.wrapp+" "+params.phone.wrapp
+        
         countryLabel.text = params.location.country.wrapp
-        addressLabel?.text = params.location.state.wrapp+" "+params.location.city.wrapp+" "+params.location.street.name.wrapp
+        
+        addressLabel?.text = params.location.street.number!.toString+" "+params.location.state.wrapp+" "+params.location.street.name.wrapp
     }
     
     
@@ -67,7 +71,7 @@ class DetailsViewController: UIViewController {
         if let latitude = params.location.coordinates.latitude?.toDouble,
            let longitude = params.location.coordinates.longitude?.toDouble {
             let location = MKPointAnnotation()
-            location.title = params.location.country
+            //location.title = params.location.country
             location.coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             mapKit.addAnnotation(location)
             
@@ -95,9 +99,7 @@ class DetailsViewController: UIViewController {
     //MARK: - Remove user details from the local storage
     @IBAction func removeUserData(_ sender:UIButton) {
         
-        guard let userId = params.userId else { return }
-        
-        LocalDataViewModel.shared.deleteValues(userId: userId)
+        LocalDataViewModel.shared.deleteValues(uuid: params.login.uuid.wrapp)
         delegate?.updateUsers(isRemove:true, uuid: params.login.uuid.wrapp)
         self.navigationController?.popViewController(animated: true)
         
@@ -108,6 +110,12 @@ class DetailsViewController: UIViewController {
 extension String {
     var toDouble:Double {
         return (self as NSString).doubleValue
+    }
+}
+
+extension Int {
+    var toString:String {
+        return String(self)
     }
 }
 
