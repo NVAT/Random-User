@@ -31,7 +31,7 @@ struct SQLiteDB {
             "STATE          CHAR(50), " +
             "CITY           CHAR(50), " +
             "STREET         CHAR(50), " +
-            "STREETNUM      INTEGER, " +
+            "STREETNUM      INTEGER,  " +
             "CELL           CHAR(50), " +
             "GENDER         CHAR(10), " +
             "LATITUDE       CHAR(50), " +
@@ -42,7 +42,6 @@ struct SQLiteDB {
             //            let errmsg = String(cString: sqlite3_errmsg(db)!)
             //            print("error creating table: \(errmsg)")
         }
-        
         
     }
     

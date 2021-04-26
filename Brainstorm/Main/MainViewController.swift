@@ -18,6 +18,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     private lazy var mainViewModel = MainViewModel()
     private var pageCounter: (extPage:Int, localPage:Int) = (1, 1)
+    private var errorText: (server:String, saved:String) = ("", "")
     private var isLoading:Bool = false{
         didSet{
             self.tableView.tableFooterView = isLoading ? createSpiner() : UIView()
@@ -28,6 +29,11 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     private let refreshControl = UIRefreshControl()
+    
+    private var isRemouteServer:Bool {
+        guard let segment = self.segmentControl else { return true}
+        return segment.selectedSegmentIndex == 0
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,7 +71,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     private func refreshData() {
         
-        if segmentControl.selectedSegmentIndex == 0 {
+        if isRemouteServer {
             getUserList(isRefresh: true)
         }else{
             fetchDataFromLocalStorage(isReset:true)
@@ -73,16 +79,15 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
     
-    private var errorText = ""
     
     private func getUserList(page:Int = 1, isRefresh:Bool = false){
         
         self.mainViewModel.page = page
         self.mainViewModel.bindMainViewModelToController = { resp, error in
             
-            self.errorText = ""
-            if let error = error as NSError? {
-                self.errorText = error.description
+            self.errorText.server = ""
+            if (error as NSError?) != nil {
+                self.errorText.server = "Something goes wrong please try again"
             }
             
             if let data = resp {
@@ -133,7 +138,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     private var currentSegmentData:[Results] {
-        return segmentControl?.selectedSegmentIndex == 0 ? data : savedUserData
+        return isRemouteServer ? data : savedUserData
     }
     
     private var currentData:[Results] {
@@ -145,12 +150,13 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     @objc private func segmentChanged(_ sender: UISegmentedControl) {
+        
         pageCounter.localPage = 1
         self.tableView.reloadData()
-        if self.savedUserData.count == 0 && sender.selectedSegmentIndex == 1 {
-            self.errorText = "There is no saved user yet"
+        if self.savedUserData.count == 0 && !isRemouteServer {
+           self.errorText.saved = "There is no saved user yet"
         }
-        searchController.searchBar.showsScopeBar = sender.selectedSegmentIndex == 0
+        searchController.searchBar.showsScopeBar = isRemouteServer
         self.isLoading = false
     }
     
@@ -162,7 +168,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             return currentData.count
         }
         else {
-            self.tableView.backgroundView = self.tableView.createErrorText(errorText: self.errorText)
+            self.tableView.backgroundView = self.tableView.createErrorText(errorText: isRemouteServer ? self.errorText.server : self.errorText.saved)
             return 0
         }
         
@@ -208,7 +214,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     private func loadMoreData() {
-        if segmentControl.selectedSegmentIndex == 0 && self.mainViewModel.isInternetConnected {
+        
+        if isRemouteServer && self.mainViewModel.isInternetConnected {
             self.isLoading = true
             pageCounter.extPage += 1
             getUserList(page:pageCounter.extPage)
@@ -221,6 +228,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             LocalDataViewModel.shared.readValues(saved: &savedUserData, page: pageCounter.localPage - 1)
             self.isLoading = false
         }
+        
     }
     
 }
@@ -279,6 +287,9 @@ extension MainViewController:DetailsViewControllerDelegate {
     func updateUsers(isRemove:Bool, uuid: String) {
         savedUserData.removeAll()
         LocalDataViewModel.shared.readValues(saved: &savedUserData)
+        if savedUserData.count == 0 {
+            self.errorText.saved = "There is no saved user yet"
+        }
         tableView.reloadData()
     }
     
@@ -297,8 +308,8 @@ extension UIView {
         errorMessage.text = errorText
         errorMessage.font = UIFont.boldSystemFont(ofSize: 17)
         errorMessage.numberOfLines = 0
-        errorMessage.textColor = UIColor.red
-        errorMessage.textAlignment = NSTextAlignment.center
+        errorMessage.textColor = .lightGray
+        errorMessage.textAlignment = .center
         errorMessage.sizeToFit()
         
         return errorMessage
