@@ -276,6 +276,13 @@ extension MainViewController: UISearchResultsUpdating {
         let searchBar = searchController.searchBar
         let searchText = searchBar.text ?? ""
         filtered(data:currentSegmentData, searchText:searchText)
+        if isFiltering && filteredData.count == 0 {
+            if isRemouteServer {
+                self.errorText.server = "There are no filtered items"
+            }else{
+                self.errorText.saved = "There are no filtered items"
+            }
+        }
         self.tableView.reloadData()
         
     }
